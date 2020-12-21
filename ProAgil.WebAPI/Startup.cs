@@ -21,7 +21,8 @@ namespace ProAgil.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+            services.AddCors();
+
             services.AddDbContext<DataContext>(
                 x => x.UseSqlite(Configuration.GetConnectionString("DefaultConection"))
             );
@@ -42,6 +43,7 @@ namespace ProAgil.WebAPI
             }
 
             // app.UseHttpsRedirection();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc();
         }
     }
