@@ -1,5 +1,8 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Evento } from '../_models/Evento';
+
+import { EventoService } from '../_services/evento.service';
 
 @Component({
   selector: 'app-eventos',
@@ -7,7 +10,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./eventos.component.scss'],
 })
 export class EventosComponent implements OnInit {
-  private _filtroLista: string = '';
+  eventosFiltrados: Evento[] = [];
+  eventos: Evento[] = [];
+  imgLargura = 50;
+  imgMargem = 10;
+  mostrarImg = false;
+  modalRef!: BsModalRef;
+
+  _filtroLista = '';
+
+  constructor(
+    private eventoService: EventoService,
+    private modalService: BsModalService
+  ) {}
 
   public get filtroLista(): string {
     return this._filtroLista;
@@ -19,20 +34,15 @@ export class EventosComponent implements OnInit {
       : this.eventos;
   }
 
-  eventosFiltrados: any = [];
-  eventos: any = [];
-
-  imgLargura = 50;
-  imgMargem = 10;
-  mostrarImg = false;
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.getEventos();
   }
 
-  filtrarEventos(filtrarPor: string): any {
+  openModal(templeta: TemplateRef<any>): void {
+    this.modalRef = this.modalService.show(templeta);
+  }
+
+  filtrarEventos(filtrarPor: string): Evento[] {
     filtrarPor = filtrarPor.toLocaleLowerCase();
 
     return this.eventos.filter(
@@ -40,15 +50,16 @@ export class EventosComponent implements OnInit {
     );
   }
 
-  alternarImg() {
+  alternarImg(): void {
     this.mostrarImg = !this.mostrarImg;
   }
 
-  getEventos() {
-    this.http.get('http://localhost:5000/api/values/').subscribe(
-      (resposta) => {
-        this.eventos = resposta;
-        console.log(resposta);
+  getEventos(): void {
+    this.eventoService.getEventoAll().subscribe(
+      (_eventos: Evento[]) => {
+        this.eventos = _eventos;
+        this.eventosFiltrados = this.eventos;
+        console.log(_eventos);
       },
       (erro) => {
         console.log(erro);
