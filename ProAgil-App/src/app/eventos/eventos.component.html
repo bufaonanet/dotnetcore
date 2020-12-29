@@ -34,8 +34,8 @@
   <tbody>
     <tr *ngFor="let evento of eventosFiltrados">
       <td>
-        <img *ngIf="mostrarImg" src="http://localhost:5000/img/{{evento.imagemURL}}" [style.width.px]="imgLargura"
-          [style.margin.px]="imgMargem">
+        <img *ngIf="mostrarImg" src="http://localhost:5000/Resources/Images/{{evento.imagemURL}}?_ts={{dataAtual}}"
+          [style.width.px]="imgLargura" [style.margin.px]="imgMargem">
       </td>
       <td>{{evento.id}}</td>
       <td>{{evento.tema}}</td>
@@ -109,10 +109,8 @@
             </div>
             <div class="form-group col-md-4">
               <label>Data e Hora</label>
-              <input type="text" 
-                class="form-control"                 
-                [ngClass]="{'is-invalid': dataEvento?.errors && dataEvento.touched}" 
-                formControlName="dataEvento"
+              <input type="text" class="form-control"
+                [ngClass]="{'is-invalid': dataEvento?.errors && dataEvento.touched}" formControlName="dataEvento"
                 bsDatepicker [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY, hh:mm a', returnFocusToInput: true }">
               <div *ngIf="dataEvento.hasError('required') && dataEvento.touched" class="invalid-feedback">
                 Data é obrigatória
@@ -133,8 +131,18 @@
             </div>
             <div class="form-group col-md-9">
               <label>Imagem</label>
-              <input type="text" class="form-control"
-                [ngClass]="{'is-invalid': imagemURL?.errors && imagemURL.touched  }" formControlName="imagemURL">
+              <table>
+                <tr>                  
+                  <td>
+                    <button class="btn btn-success" (click)="file.click()">
+                      Enviar imagem
+                    </button>
+                    <input #file (change)="onFileChange($event)" type="file" class="form-control"
+                      [ngClass]="{'is-invalid': imagemURL?.errors && imagemURL.touched  }" formControlName="imagemURL"
+                      style="display: none;">
+                  </td>
+                </tr>
+              </table>
               <div *ngIf="imagemURL.hasError('required') && imagemURL.touched" class="invalid-feedback">
                 Imagem obrigatória
               </div>

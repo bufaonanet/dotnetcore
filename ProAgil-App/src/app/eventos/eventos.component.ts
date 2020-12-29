@@ -16,9 +16,11 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 })
 export class EventosComponent implements OnInit {
   titulo = 'Eventos';
+
   eventosFiltrados: Evento[] = [];
   eventos: Evento[] = [];
   evento!: Evento;
+
   imgLargura = 50;
   imgMargem = 10;
   mostrarImg = false;
@@ -27,7 +29,11 @@ export class EventosComponent implements OnInit {
   tituloForm = '';
   bodyDeletarEvento = '';
 
+  file!: File;
+
   _filtroLista = '';
+  fileNameToUpdate = '';
+  dataAtual = '';
 
   constructor(
     private eventoService: EventoService,
@@ -87,11 +93,14 @@ export class EventosComponent implements OnInit {
   }
 
   editarEvento(template: ModalDirective, evento: Evento): void {
+    this.openModal(template);
     this.modoSalvar = 'put';
     this.tituloForm = 'Editar Evento';
-    this.openModal(template);
-    this.evento = evento;
-    this.registerForm.patchValue(evento);
+
+    this.evento = Object.assign({}, evento);
+    this.fileNameToUpdate = this.evento.imagemURL.toString();
+    this.evento.imagemURL = '';
+    this.registerForm.patchValue(this.evento);
   }
 
   excluirEvento(template: ModalDirective, evento: Evento): void {
@@ -117,6 +126,9 @@ export class EventosComponent implements OnInit {
     if (this.registerForm.valid) {
       if (this.modoSalvar === 'post') {
         this.evento = Object.assign({}, this.registerForm.value);
+
+        this.uploadImagem();
+
         this.eventoService.postEvento(this.evento).subscribe(
           () => {
             template.hide();
@@ -134,6 +146,9 @@ export class EventosComponent implements OnInit {
           { id: this.evento.id },
           this.registerForm.value
         );
+
+        this.uploadImagem();
+
         this.eventoService.putEvento(this.evento).subscribe(
           () => {
             template.hide();
@@ -145,6 +160,27 @@ export class EventosComponent implements OnInit {
           }
         );
       }
+    }
+  }
+
+  private uploadImagem(): void {
+    if (this.modoSalvar === 'post') {
+      const nomeArquivo = this.evento.imagemURL.split('\\', 3);
+      this.evento.imagemURL = nomeArquivo[2];
+
+      this.eventoService.postUpload(this.file, nomeArquivo[2]).subscribe(() => {
+        this.dataAtual = new Date().getMilliseconds().toString();
+        this.getEventos();
+      });
+    } else {
+      this.evento.imagemURL = this.fileNameToUpdate;
+
+      this.eventoService
+        .postUpload(this.file, this.fileNameToUpdate)
+        .subscribe(() => {
+          this.dataAtual = new Date().getMilliseconds().toString();
+          this.getEventos();
+        });
     }
   }
 
@@ -189,5 +225,13 @@ export class EventosComponent implements OnInit {
       telefone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
     });
+  }
+
+  onFileChange(event: any): void {
+    const reader = new FileReader();
+
+    if (event.target.files && event.target.files.length) {
+      this.file = event.target.files[0];
+    }
   }
 }
