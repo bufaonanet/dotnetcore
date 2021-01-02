@@ -136,7 +136,9 @@ export class EventosComponent implements OnInit {
             this.getEventos();
           },
           (error) => {
-            this.toastr.success(`${error}`, 'Erro ao Salvar');
+            this.toastr.error(`${error}`, 'Erro ao Salvar');
+            console.log(error);
+            
           }
         );
       }
@@ -156,7 +158,7 @@ export class EventosComponent implements OnInit {
             this.getEventos();
           },
           (error) => {
-            this.toastr.success(`${error}`, 'Erro ao Editar');
+            this.toastr.error(`${error}`, 'Erro ao Editar');
           }
         );
       }
@@ -203,7 +205,7 @@ export class EventosComponent implements OnInit {
         this.eventosFiltrados = this.eventos;
       },
       (error) => {
-        this.toastr.success(`${error}`, 'Erro ao buscar registros');
+        this.toastr.error(`${error}`, 'Erro ao buscar registros');
       }
     );
   }
