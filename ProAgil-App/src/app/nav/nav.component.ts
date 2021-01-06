@@ -9,10 +9,7 @@ import { AuthService } from '../_services/auth.service';
   styleUrls: ['./nav.component.css'],
 })
 export class NavComponent implements OnInit {
-  constructor(
-    public authService: AuthService,
-    public router: Router
-  ) {}
+  constructor(public authService: AuthService, public router: Router) {}
 
   ngOnInit(): void {}
 
@@ -27,5 +24,9 @@ export class NavComponent implements OnInit {
 
   entrar(): void {
     this.router.navigate(['/user/login']);
+  }
+
+  userName(): string | null {
+    return sessionStorage.getItem('username');
   }
 }

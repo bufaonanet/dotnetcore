@@ -9,6 +9,9 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToastrModule } from 'ngx-toastr';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { NgxMaskModule } from 'ngx-mask';
+import { NgxCurrencyModule } from "ngx-currency";
 
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -24,6 +27,7 @@ import { RegistrationComponent } from './user/registration/registration.componen
 
 import { DateTimeFormatPipe } from './util/DateTimeFormat.pipe';
 import { AuthInterceptor } from './auth/AuthInterceptor';
+import { EventoEditComponent } from './eventos/evento-edit/evento-edit.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +35,7 @@ import { AuthInterceptor } from './auth/AuthInterceptor';
     NavComponent,
     TituloComponent,
     EventosComponent,
+    EventoEditComponent,
     ContatosComponent,
     DashboardComponent,
     PalestrantesComponent,
@@ -48,12 +53,15 @@ import { AuthInterceptor } from './auth/AuthInterceptor';
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    TabsModule.forRoot(),
     BrowserAnimationsModule,
+    NgxMaskModule.forRoot(),
     ToastrModule.forRoot({
       timeOut: 1500,
       preventDuplicates: true,
     }),
     ReactiveFormsModule,
+    NgxCurrencyModule
   ],
   providers: [
     EventoService,

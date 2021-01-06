@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -52,11 +54,11 @@ namespace ProAgil.WebAPI.Controllers
                 if (file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
-                    var fullPath = Path.Combine(pathToSave, fileName.Replace("\"","").Trim());
+                    var fullPath = Path.Combine(pathToSave, fileName.Replace("\"", "").Trim());
 
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        file.CopyTo(stream);                        
+                        file.CopyTo(stream);
                     }
                 }
 
@@ -129,11 +131,27 @@ namespace ProAgil.WebAPI.Controllers
             try
             {
                 var evento = await _repo.GetEventoByIdAsync(id, false);
+                if (evento == null) return NotFound();
 
-                if (evento == null)
-                {
-                    return NotFound();
-                }
+                var idLotes = new List<int>();
+                var idRedesSociais = new List<int>();
+
+                model.Lotes.ForEach(lote => idLotes.Add(lote.Id));
+                model.RedesSociais.ForEach(rede => idRedesSociais.Add(rede.Id));
+
+                var lotes = evento.Lotes.Where(
+                    lote => !idLotes.Contains(lote.Id)
+                ).ToArray();
+
+                var RedesSociais = evento.RedesSociais.Where(
+                    redeSocial => !idLotes.Contains(redeSocial.Id)
+                ).ToArray();
+
+                if (lotes.Length > 0)
+                    _repo.DeleteRange(lotes);
+
+                if (RedesSociais.Length > 0)
+                    _repo.DeleteRange(RedesSociais);
 
                 _mapper.Map(model, evento);
 

@@ -28,7 +28,7 @@
       <th>Data</th>
       <th>Qtd Pessoas</th>
       <th>Lote</th>
-      <th>Opções</th>
+      <th colspan="2">Opções</th>
     </tr>
   </thead>
   <tbody>
@@ -59,6 +59,11 @@
             <i class="fa fa-eraser"></i>
           </button>
         </div>
+      </td>
+      <td>
+        <a [routerLink]="['/evento', evento.id,'edit']" tooltip="Edição Detalhada" class="btn btn-sm btn-warning">
+          <i class="fa fa-edit"></i>
+        </a>
       </td>
     </tr>
   </tbody>
@@ -132,7 +137,7 @@
             <div class="form-group col-md-9">
               <label>Imagem</label>
               <table>
-                <tr>                  
+                <tr>
                   <td>
                     <button class="btn btn-success" (click)="file.click()">
                       Enviar imagem
